@@ -1,19 +1,19 @@
 [toc]
 
-#####1，mitmproxy和mitmdump
+####1，mitmproxy和mitmdump
 * mitmproxy：一个交互式的控制台程序，允许信息流被截获，检查、修改和回放。
 * mitmdump：提供给http命令，与mitmproxy没有多余的装饰相同的功能。
 
-#####2，安装mitmproxy
+####2，安装mitmproxy
 
     pip install mitmproxy
     
 
-#####3，mitmproxy源码
+####3，mitmproxy源码
 
     github.com/mitmproxy/mitmproxy
     
-#####4，相关模块介绍
+####4，相关模块介绍
 
 pathod
     
@@ -35,11 +35,11 @@ mastermind
 
     来自ustmo的一个项目，提供了一个简单的方法来模拟服务（如API，网站）。
     
-#####5，Inline Scripts
+####5，Inline Scripts
 
 mitmproxy有一个强大的脚本API，可以让你修改即时流量或本地改写先前保存的流动。
 
-######5.1，示例
+#####5.1，示例
 
 mitmproxy脚本api是事件驱动的。一个脚本是一个Python模块，它公开了一组事件的方法。下面是完整的mitmproxy脚本，为每个http响应增加一个新的header，在它返回客户端之前。
 
@@ -62,11 +62,11 @@ def response(context, flow):
 
 mitmproxy自带了多种例如内嵌脚本，可以演示许多基本操作。建议你在本地或者gitlab阅读阅读相关内容。
 
-######5.2，Events
+#####5.2，Events
 
 传到每个方法中的参数context，始终是ScriptContext的一个实例。它在脚本的生命周期中，保证是同一个对象，且不在多个inline脚本之间共享。您可以放心地使用它来存储您需要的、任何形式的状态。
 
-#######5.2.1，Script Lifecycle Events(脚本生命周期事件)
+######5.2.1，Script Lifecycle Events(脚本生命周期事件)
 
     start(context, argv)：
         在启动时调用一次，任何其他事件之前。
@@ -76,7 +76,7 @@ mitmproxy自带了多种例如内嵌脚本，可以演示许多基本操作。�
     done(context)：
         脚本结束时调用，在所有其他脚本之后。
         
-#######5.2.2，Connection Events(连接事件)
+######5.2.2，Connection Events(连接事件)
 
     clientconnect(context, root_layer)：
         当一个客户端向proxy发起一个连接时被调用。请注意，一个连接可以对应多个HTTP请求。(0.14版本)
@@ -93,7 +93,7 @@ mitmproxy自带了多种例如内嵌脚本，可以演示许多基本操作。�
     serverdisconnect(context, server_conn)：
         在proxy关闭服务的连接时，被调用。
         
-#######5.2.3，HTTP Events(HTTP事件) 
+######5.2.3，HTTP Events(HTTP事件) 
         
     request(context, flow)：
         当一个终端request被接受的时候调用，flow对象保证有一个非空的request请求。
@@ -111,14 +111,14 @@ mitmproxy自带了多种例如内嵌脚本，可以演示许多基本操作。�
         当调用发生流量误差，例如无效的服务器响应，或中断连接。这是一个有效的服务器的HTTP错误响应，返回http错误码。
         参数flow：flow包含错误信息，且保证非空。
         
-#######5.2.4，TCP Events(HTTP事件) 
+######5.2.4，TCP Events(HTTP事件) 
            
     tcp_message(context, tcp_msg)：
         如果代理是TCP模式，当它接收到来自客户端或服务器的TCP有效载荷，该事件被调用。
         发送器和接收器是可识别的。该消息是用户可修改。
         参数tcp_msg：参见examples/tcp_message.py？        
 
-######5.3，API
+#####5.3，API
     
     规范的API文档是代码，你可以在此浏览，也可以查看源码。
     mitmproxy的主要类如下：
@@ -133,7 +133,7 @@ mitmproxy自带了多种例如内嵌脚本，可以演示许多基本操作。�
     netlib.certutils.SSLCert：Exposes information SSL certificates.
     mitmproxy.flow.FlowMaster：The “heart” of mitmproxy, usually subclassed as mitmproxy.dump.DumpMaster or mitmproxy.console.ConsoleMaster.
     
-######5.4，Script Context
+#####5.4，Script Context
     
    该脚本环境应使用在脚本中与全球mitmproxy状态进行交互。
    
@@ -153,7 +153,7 @@ mitmproxy自带了多种例如内嵌脚本，可以演示许多基本操作。�
    
    remove_contentview(view_obj): 
    
-######5.5，Running scripts in parallel：并行运行的脚本
+#####5.5，Running scripts in parallel：并行运行的脚本
 
 我们有一个原始的flow，所以当一个脚本block，其他的requests将不被处理。阻碍的脚本被运行，通过使用mitmproxy.script.concurrent decorator可以解决，但是这通常被认为是过于理想的。如果你的脚本不阻塞，那就可以避免装饰器的开销。
     
@@ -171,7 +171,7 @@ mitmproxy自带了多种例如内嵌脚本，可以演示许多基本操作。�
         
     ```
     
-######5.6，Make scripts configurable with arguments：使脚本配置带参数
+#####5.6，Make scripts configurable with arguments：使脚本配置带参数
 
 有时候你想通过运行时参数运行inline脚本。这件事可以简单的完成，通过用引号包围脚本调用。例如: `mitmdump -s 'script.py --foo 42'。参数在随后启动事件中曝光。
 
@@ -196,12 +196,12 @@ mitmproxy自带了多种例如内嵌脚本，可以演示许多基本操作。�
                 context.new)
     ```
     
-######5.7，Running scripts on saved flows：运行脚本上保存flows
+#####5.7，Running scripts on saved flows：运行脚本上保存flows
 
     有时候，我们想在flow objects上，运行一个已完成的脚本。这将发生在你启动一个脚本，然后从一个文件加载一个已存储flows束(见scripted data transformation这个例子)。它也会发生在你运行单个脚本的时候。
     
     在这种情况下，没有任何客户端连接，并且时间按以下顺序执行：start, request, responseheaders, response, error, done。如果flow没有一个response或者error与它关联。与它匹配的事件将被跳过。
     
-######5.8，Spaces in the script path：脚本路径空间
+#####5.8，Spaces in the script path：脚本路径空间
 
     通常，空间被解释为内嵌脚本和它的参数之间的分隔符。例如：-s 'foo.py 42'。因此，脚本路径必须被包裹在一个单独的对引号如果包含空格：-s'\'./富酒吧/ baz.py\'42'.
